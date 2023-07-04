@@ -19,6 +19,8 @@ jobs:
       volumes:
         - docs:/docs
     steps:
+      - name: debug
+        run: pwd && ls
       - name: Build Site
         run: make html
       - name: Upload Artifact
