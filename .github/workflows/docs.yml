@@ -16,11 +16,13 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: sphinxdoc/sphinx:5.3.0
+      volumes:
+        - docs:/docs
     steps:
       - name: debug
         run: ls docs
       - name: Build Site
-        run: make html
+        run: make -C docs html
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v1
         with:
