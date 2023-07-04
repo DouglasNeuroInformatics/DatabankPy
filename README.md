@@ -35,3 +35,10 @@ python -m build
 ```shell
 python -m twine upload dist/*
 ```
+
+### Build Docs
+
+```shell
+sphinx-build -b html docs/source/ docs/build
+http-server docs/build
+```
