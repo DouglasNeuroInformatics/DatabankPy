@@ -20,7 +20,7 @@ jobs:
         - docs:/docs
     steps:
       - name: debug
-        run: ls
+        run: echo $(ls) > /dev/stdout
       - name: Build Site
         run: make -C docs html
       - name: Upload Artifact
