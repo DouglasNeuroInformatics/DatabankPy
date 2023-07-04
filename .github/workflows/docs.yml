@@ -18,7 +18,7 @@ jobs:
       image: sphinxdoc/sphinx:5.3.0
     steps:
       - name: debug
-        run: ls && ls databankpy && ls docs
+        run: ls docs
       - name: Build Site
         run: make html
       - name: Upload Artifact
