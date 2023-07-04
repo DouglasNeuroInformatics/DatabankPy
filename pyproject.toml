@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "databankpy"
+version = "0.0.1"
+authors = [
+  { name="Joshua Unrau", email="contact@joshuaunrau.com" },
+]
+description = 'DatabankPy is a set of utilities for programmatic access to the DNP databank'
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+keywords = ["Douglas", "Databank", "DNP", "Data", "Bank"]
+
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent"
+]
+dependencies = []
+
+
+[project.optional-dependencies]
+dev = [
+  "black >= 22.6.0",
+  "build >= 0.9.0",
+  "mypy >= 0.971",
+  "twine >= 4.0.1"
+]
+
+[project.urls]
+Documentation = "https://github.com/DouglasNeuroInformatics/DatabankPy#readme"
+Issues = "https://github.com/DouglasNeuroInformatics/DatabankPy/issues"
+Source = "https://github.com/DouglasNeuroInformatics/DatabankPy"
+
+[tool.mypy]
+python_version = "3.10"
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+
+[tool.setuptools.packages.find]
+include = ["databankpy"]
