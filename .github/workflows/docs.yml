@@ -20,13 +20,13 @@ jobs:
         - docs:/docs
     steps:
       - name: debug
-        run: pwd && ls
+        run: ls
       - name: Build Site
-        run: make html
+        run: make -C docs html
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: './build/docs'
+          path: 'docs/build/html'
   deploy:
     needs: build
     runs-on: ubuntu-latest
