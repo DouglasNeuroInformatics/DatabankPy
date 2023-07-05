@@ -18,6 +18,7 @@ author = 'Joshua Unrau'
 
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.napoleon', 'sphinx.ext.viewcode',  'sphinx_toolbox.more_autodoc.autotypeddict']
 
+autodoc_class_signature = 'separated'
 autodoc_member_order = 'bysource'
 
 templates_path = ['_templates']
