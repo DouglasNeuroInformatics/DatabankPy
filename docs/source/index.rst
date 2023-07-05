@@ -1,9 +1,9 @@
-Welcome to the documentation for DatabankPy
+DatabankPy Documentation
 ===========================================
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Content
 
    installation
    modules

@@ -1,5 +1,5 @@
-Installation
-============
+Installation Guide
+==================
 
 To use DatabankPy, first install it using pip:
 

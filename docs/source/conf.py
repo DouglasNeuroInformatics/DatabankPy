@@ -3,14 +3,14 @@
 import os
 import sys
 
-pkg_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
-sys.path.insert(0, pkg_path)
+root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, root_path)
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'DatabankPy'
-copyright = '2023, Joshua Unrau'
+copyright = '2023 Douglas Neuroinformatics Platform'
 author = 'Joshua Unrau'
 
 # -- General configuration ---------------------------------------------------
@@ -26,3 +26,12 @@ exclude_patterns = ['.DS_Store']
 
 html_theme = 'sphinx_book_theme'
 html_static_path = ['_static']
+html_css_files = ["custom.css"]
+
+html_theme_options = {
+    "repository_url": "https://github.com/DouglasNeuroInformatics/DatabankPy",
+    "use_repository_button": True,
+    "show_navbar_depth": 3
+}
+
+html_title = "DatabankPy"

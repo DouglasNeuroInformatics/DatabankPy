@@ -1,0 +1,11 @@
+.bd-main {
+  flex-grow: 1 !important;
+}
+
+.bd-content {
+  width: 100%;
+}
+
+/* .navbar-brand > img {
+  display: none;
+} */
