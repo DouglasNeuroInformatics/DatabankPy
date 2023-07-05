@@ -161,3 +161,7 @@ cython_debug/
 
 # Sphynx
 docs/build
+
+# Dev
+data/
+main.py
