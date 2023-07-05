@@ -63,6 +63,17 @@ class Dataset:
     def __len__(self) -> int:
         return len(self.columns[next(iter(self.columns))]["data"])
 
+    def __array__(self) -> npt.NDArray[np.void]:
+        arr = np.empty(
+            (len(self), 1),
+            dtype=np.dtype(
+                [(k, DTYPE_MAP[v["type"]]) for k, v in self.columns.items()]
+            ),
+        )
+        for key, value in self.columns.items():
+            arr[key] = value["data"].reshape((-1, 1))
+        return arr
+
     @property
     def name(self) -> str:
         """The name of the dataset"""
