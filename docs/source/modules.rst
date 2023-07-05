@@ -7,7 +7,6 @@ Auth
 .. automodule:: databankpy.auth
    :members:
    :undoc-members:
-   :show-inheritance:
 
 Dataset
 -------
@@ -15,5 +14,6 @@ Dataset
 .. automodule:: databankpy.dataset
    :members:
    :undoc-members:
+   :special-members: __init__, __len__
 
 
