@@ -47,6 +47,9 @@ class Dataset:
             k: cast(DatasetColumn, {**v, "data": []})
             for k, v in info["columns"].items()
         }
+    
+    def __len__(self) -> int:
+        return len(self.columns[next(iter(self.columns))]['data'])
 
     @property
     def name(self) -> str:
@@ -68,8 +71,8 @@ class Dataset:
         """A dictionary mapping column names to metadata and an array of values"""
         return self._columns
 
-    def load_csv(self, filepath: str) -> None:
-        """Load the data from a csv file"""
+    def append_csv(self, filepath: str) -> None:
+        """Load the rows from a CSV file and append them to the dataset"""
         with open(filepath, "r", newline="") as f:
             reader = csv.reader(f, delimiter=",", strict=True)
             column_names = next(reader)
