@@ -31,6 +31,10 @@
 </div>
 <hr />
 
+## About
+
+This library includes wrapper functions for interacting with the API of our databank.
+
 ## Installation
 
 ```shell
@@ -60,6 +64,5 @@ python -m twine upload dist/*
 ### Build Docs
 
 ```shell
-sphinx-build -b html docs/source/ docs/build
-http-server docs/build
+make -C docs html && http-server -c-1 docs/build/html
 ```
