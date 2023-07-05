@@ -14,8 +14,7 @@ DatasetColumnType = Literal["FLOAT", "INTEGER", "STRING"]
 
 DatasetLicense = Literal["PUBLIC_DOMAIN", "OTHER"]
 
-DatasetColumnValues = list[int | float | str]
-
+DatasetColumnData = list[int | float | str]
 
 class DatasetColumnDefinition(TypedDict):
     description: str
@@ -24,7 +23,7 @@ class DatasetColumnDefinition(TypedDict):
 
 
 class DatasetColumn(DatasetColumnDefinition):
-    values: DatasetColumnValues
+    data: DatasetColumnData
 
 
 class DatasetInfo(TypedDict):
@@ -45,7 +44,7 @@ class Dataset:
         self._description = info["description"]
         self._license = info["license"]
         self._columns = {
-            k: cast(DatasetColumn, {**v, "values": []})
+            k: cast(DatasetColumn, {**v, "data": []})
             for k, v in info["columns"].items()
         }
 
@@ -70,7 +69,7 @@ class Dataset:
         return self._columns
 
     def load_csv(self, filepath: str) -> None:
-        """load the data from a csv file"""
+        """Load the data from a csv file"""
         with open(filepath, "r", newline="") as f:
             reader = csv.reader(f, delimiter=",", strict=True)
             column_names = next(reader)
@@ -79,20 +78,16 @@ class Dataset:
                     raise RuntimeError(f"Column '{col}' not found in file: {filepath}")
             for row in reader:
                 for i in range(len(row)):
-                    self.columns[column_names[i]]["values"].append(row[i])
+                    self.columns[column_names[i]]["data"].append(row[i])
 
     @overload
     def upload(self, access_token: str) -> None:
-        """
-        Upload this dataset to the databank using an access token
-        """
+        """Upload this dataset to the databank using an access token"""
         ...
 
     @overload
     def upload(self, email: str, password: str) -> None:
-        """
-        Upload this dataset to the databank using your login credentials
-        """
+        """Upload this dataset to the databank using your login credentials"""
         ...
 
     def upload(self, *args: str, **kwargs: str) -> None:

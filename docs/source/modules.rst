@@ -12,6 +12,8 @@ Auth
 Dataset
 -------
 
-.. autoclass:: databankpy.dataset.Dataset
+.. automodule:: databankpy.dataset
    :members:
    :undoc-members:
+
+
