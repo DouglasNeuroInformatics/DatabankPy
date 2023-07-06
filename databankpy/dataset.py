@@ -12,7 +12,7 @@ import requests
 
 from databankpy import BASE_URL
 from databankpy.auth import get_access_token
-from databankpy.utils import NumpyEncoder
+from databankpy.utils import NumpyEncoder, find_index
 
 DatasetColumnType = Literal["FLOAT", "INTEGER", "STRING"]
 
@@ -28,8 +28,8 @@ DTYPE_MAP: dict[DatasetColumnType, npt.DTypeLike] = {
     "STRING": np.object_,
 }
 
-
 class DatasetColumnDefinition(TypedDict):
+    name: str
     description: str
     nullable: bool
     type: DatasetColumnType
@@ -43,38 +43,35 @@ class DatasetInfo(TypedDict):
     name: str
     description: str
     license: DatasetLicense
-    columns: dict[str, DatasetColumnDefinition]
+    columns: list[DatasetColumnDefinition]
 
 
 class Dataset:
     _name: str
     _description: str
     _license: DatasetLicense
-    _columns: dict[str, DatasetColumn]
+    _columns: list[DatasetColumn]
 
     def __init__(self, info: DatasetInfo) -> None:
         self._name = info["name"]
         self._description = info["description"]
         self._license = info["license"]
-        self._columns = {}
+        self._columns = []
 
-        for key, value in info["columns"].items():
-            self._columns[key] = cast(DatasetColumn, value)
-            self._columns[key]["data"] = np.ndarray(0, dtype=DTYPE_MAP[value["type"]])
-
+        for col in info["columns"]:
+            item = col | {'data' : np.ndarray(0, dtype=DTYPE_MAP[col["type"]])}
+            self._columns.append(cast(DatasetColumn, item))
+    
     def __array__(self) -> npt.NDArray[np.void]:
-        arr = np.empty(
-            (len(self), 1),
-            dtype=np.dtype(
-                [(k, DTYPE_MAP[v["type"]]) for k, v in self.columns.items()]
-            ),
-        )
-        for key, value in self.columns.items():
-            arr[key] = value["data"].reshape((-1, 1))
+        shape = (len(self), 1)
+        dtype = [(col['name'], DTYPE_MAP[col["type"]]) for col in self.columns]
+        arr = np.empty(shape, dtype=dtype)
+        for col in self.columns:
+            arr[col["name"]] = col["data"].reshape((-1, 1))
         return arr.flatten()
 
     def __len__(self) -> int:
-        return len(self.columns[next(iter(self.columns))]["data"])
+        return len(self.columns[0]["data"])
 
     @property
     def name(self) -> str:
@@ -92,14 +89,14 @@ class Dataset:
         return self._license
 
     @property
-    def columns(self) -> dict[str, DatasetColumn]:
+    def columns(self) -> list[DatasetColumn]:
         """A dictionary mapping column names to metadata and an array of values"""
         return self._columns
 
     @property
     def column_names(self) -> npt.NDArray[np.str_]:
-        return np.array(list(self.columns.keys()), dtype=np.str_)
-
+        return np.array([col["name"] for col in self.columns], dtype=np.str_)
+    
     def append_csv(self, filepath: str) -> None:
         """Load the rows from a CSV file and append them to the dataset"""
         with open(filepath, "r", newline="") as f:
@@ -113,11 +110,13 @@ class Dataset:
             for row in reader:
                 for i, col in enumerate(csv_columns.keys()):
                     csv_columns[col].append(row[i])
-
-            for key, value in csv_columns.items():
-                self.columns[key]["data"] = np.append(
-                    self.columns[key]["data"],
-                    np.array(value, dtype=DTYPE_MAP[self.columns[key]["type"]]),
+            
+            for colname, data in csv_columns.items():
+                index = find_index(self.columns, lambda col : col["name"] == colname)
+                assert index is not None
+                self.columns[index]['data'] = np.append(
+                    self.columns[index]["data"],
+                    np.array(data, dtype=DTYPE_MAP[self.columns[index]["type"]]),
                 )
 
     @overload
