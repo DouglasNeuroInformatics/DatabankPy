@@ -23,7 +23,7 @@ jobs:
           python-version: '3.11'
           cache: 'pip'
       - name: Install Dependencies
-        run: pip install -r docs/requirements.txt
+        run: pip install . && pip install -r docs/requirements.txt
       - name: Build Site
         run: make -C docs html
       - name: Upload Artifact
