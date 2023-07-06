@@ -41,6 +41,55 @@ This library includes wrapper functions for interacting with the API of our data
 pip install databankpy
 ```
 
+## Basic Usage
+
+### Create Dataset
+
+```python
+
+import os
+
+from databankpy.dataset import Dataset
+
+iris = Dataset({
+    'name': 'Iris',
+    'description': "A small classic dataset from Fisher, 1936",
+    'license': 'PUBLIC_DOMAIN',
+    'columns': {
+        'SEPAL_LENGTH': {
+            'description': 'sepal length in cm',
+            'nullable': False,
+            'type': 'FLOAT'
+        },
+        'SEPAL_WIDTH': {
+            'description': 'sepal width in cm',
+            'nullable': False,
+            'type': 'FLOAT'
+        },
+        'PETAL_LENGTH': {
+            'description': 'petal length in cm',
+            'nullable': False,
+            'type': 'FLOAT'
+        },
+        'PETAL_WIDTH': {
+            'description': 'petal width in cm',
+            'nullable': False,
+            'type': 'FLOAT'
+        },
+        'SPECIES': {
+            'description': 'species of iris',
+            'nullable': False,
+            'type': 'STRING'
+        }
+    }
+})
+
+iris.append_csv(os.path.abspath(os.path.join('data', 'iris.csv')))
+
+email, password = os.environ['DATABANK_EMAIL'], os.environ['DATABANK_PASSWORD']
+iris.upload(email, password)
+
+```
 ## Development Setup
 
 ### Install Dependencies

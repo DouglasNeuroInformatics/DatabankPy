@@ -14,6 +14,6 @@ Dataset
 .. automodule:: databankpy.dataset
    :members:
    :undoc-members:
-   :special-members: __init__, __len__, __array__
+   :special-members: __init__, __array__, __len__
 
 

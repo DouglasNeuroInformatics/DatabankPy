@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import csv
+import json
 import sys
 
-from typing import cast, overload, Any, Literal, TypedDict
+from typing import cast, overload, Literal, TypedDict
 
 import numpy as np
 import numpy.typing as npt
@@ -11,19 +12,20 @@ import requests
 
 from databankpy import BASE_URL
 from databankpy.auth import get_access_token
+from databankpy.utils import NumpyEncoder
 
 DatasetColumnType = Literal["FLOAT", "INTEGER", "STRING"]
 
 DatasetLicense = Literal["PUBLIC_DOMAIN", "OTHER"]
 
 DatasetColumnData = (
-    npt.NDArray[np.int32] | npt.NDArray[np.float64] | npt.NDArray[np.str_]
+    npt.NDArray[np.int32] | npt.NDArray[np.float64] | npt.NDArray[np.object_]
 )
 
 DTYPE_MAP: dict[DatasetColumnType, npt.DTypeLike] = {
     "FLOAT": np.float64,
     "INTEGER": np.int32,
-    "STRING": np.str_,
+    "STRING": np.object_,
 }
 
 
@@ -60,9 +62,6 @@ class Dataset:
             self._columns[key] = cast(DatasetColumn, value)
             self._columns[key]["data"] = np.ndarray(0, dtype=DTYPE_MAP[value["type"]])
 
-    def __len__(self) -> int:
-        return len(self.columns[next(iter(self.columns))]["data"])
-
     def __array__(self) -> npt.NDArray[np.void]:
         arr = np.empty(
             (len(self), 1),
@@ -72,7 +71,10 @@ class Dataset:
         )
         for key, value in self.columns.items():
             arr[key] = value["data"].reshape((-1, 1))
-        return arr
+        return arr.flatten()
+
+    def __len__(self) -> int:
+        return len(self.columns[next(iter(self.columns))]["data"])
 
     @property
     def name(self) -> str:
@@ -146,13 +148,19 @@ class Dataset:
 
         response = requests.post(
             f"{BASE_URL}/v1/datasets",
-            json={
-                "name": self.name,
-                "description": self.description,
-                "license": self.license,
-                "columns": self.columns,
+            data=json.dumps(
+                {
+                    "name": self.name,
+                    "description": self.description,
+                    "license": self.license,
+                    "columns": self.columns,
+                },
+                cls=NumpyEncoder,
+            ),
+            headers={
+                "Authorization": f"Bearer {access_token}",
+                "Content-Type": "application/json",
             },
-            headers={"Authorization": f"Bearer {access_token}"},
         )
 
         if response.ok:
